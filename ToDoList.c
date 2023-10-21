@@ -1,4 +1,4 @@
-// C code to implement Priority Queue
+// C code to implement To Do List with Priority Queue
 // using Linked List
 #include <stdio.h>
 #include <stdlib.h>
@@ -69,7 +69,6 @@ int isEmpty(struct node** head)
     return (*head) == NULL;
 }
 
-
 int main()
 {
 
@@ -79,7 +78,7 @@ int main()
     int numberOfTask=0;
     int numberOfCompletedTask=0;
     struct node* pq = NULL; 
-    while(choice!=6)
+    while(choice!=7)
     {
     
     
@@ -89,7 +88,7 @@ int main()
     printf("3. Mark Task as Completed\n");
     printf("4. Display all the Task with Priority\n");
     printf("5. Give Highest Priority task to be done\n");
-    printf("6. Display All Completed Task");
+    printf("6. Display All Completed Task\n");
     printf("7. Exit\n");
     printf("Pick a choice\n");
     scanf("%d",&choice);
@@ -126,7 +125,7 @@ switch(choice)
     case 2:
     {
         char remove[100];
-        
+
         if(!isEmpty(&pq))
         {
             struct node* prev = NULL;
@@ -178,15 +177,17 @@ switch(choice)
             printf("Enter the Task to be marked complete\n");
             scanf("%s",completed);
 
-             while(ptr!= NULL && strcmp(ptr->data, remove) != 0)
+             while(ptr!= NULL && strcmp(ptr->data, completed) != 0)
             {
                 ptr=ptr->next;
             }
 
-            
-
+            ptr->completed=1;
+            numberOfCompletedTask++;
+            printf("%s is Marked Completed \n", ptr->data);
 
         }
+        break;
     }
 
     case 4:
@@ -199,9 +200,15 @@ switch(choice)
             printf("--------   -----------------\n");
             while(ptr!=NULL)
             {
-                
-                printf("%-10d %s\n",ptr->priority, ptr->data);
-                ptr=ptr->next;
+                if(ptr->completed==0)
+                {
+                     printf("%-10d %s\n",ptr->priority, ptr->data);
+                }
+                else
+                {
+                    printf("%-10d %s    **Completed**   \n",ptr->priority, ptr->data);
+                }
+               ptr=ptr->next;
             }
 
             printf("\n\n\n");
@@ -215,26 +222,55 @@ switch(choice)
     }
     case 5:
     {
-        if(!isEmpty(&pq))
+        if(!isEmpty(&pq) && numberOfTask-numberOfCompletedTask!=0)
         {
-            struct node* ptr=pq;
-            int highestPriority=pq->priority;
-            printf("Highest Priority Tasks\n");
-            while(ptr != NULL && ptr->priority == highestPriority)
+            struct node* ptri=pq;
+            struct node* ptri1=pq;
+
+            while(ptri1->completed!=0)
             {
-                printf("%s \n",ptr->data);
-                ptr=ptr->next;
+                ptri1=ptri1->next;
+            }
+            int highestPriority=ptri1->priority;
+            printf("Highest Priority Tasks\n");
+            while(ptri != NULL && ptri->priority == highestPriority)
+            {
+                if(ptri->completed!=1)
+                {
+                     printf("%s \n",ptri->data);
+                    ptri=ptri->next;
+                }
+               
             }
         }
         else
         {
-            printf("\nNo Task Currently Added\n\n");
+            printf("\nNo Task Currently To Be Done\n\n");
         }
         break;
     }
     case 6:
     {
         
+        struct node *ptr2=pq;
+        if(numberOfCompletedTask!=0)
+        {
+            printf("The Completed Task are: \n");
+            while(ptr2!=NULL)
+            {
+                if(ptr2->completed==1)
+                {
+                    printf("%s \n",ptr2->data);
+                }
+                ptr2=ptr2->next;
+            }
+        }
+        else
+        {
+            printf("No completed task yet");
+        }
+        
+        break;
     }
     case 7:
     {
