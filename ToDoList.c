@@ -1,10 +1,8 @@
-// C code to implement To Do List with Priority Queue
-// using Linked List
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
-// Node
  struct node
 {
     char data[100] ;
@@ -24,44 +22,27 @@ struct node* newNode(char d[], int p)
 }
 
 
-char* peek(struct node** head)
-{
-    return (*head)->data;
-}
-
-
-void pop(struct node** head)
-{
-    struct node* temp = *head;
-    (*head) = (*head)->next;
-    free(temp);
-}
-
-// Function to push according to priority
 void push(struct node** head, char d[], int p)
 {
-    struct node* start = (*head);
-    struct node* temp = newNode(d, p);
+    struct node* starting = (*head);
+    struct node* tempvar = newNode(d, p);
 
 
-if ((*head)->priority > p) 
-{
-    // Insert New Node before head
-    temp->next = *head;
-    (*head) = temp;
-}
-else 
-{
-// Traverse the list and find a
-// position to insert new node
-    while (start->next != NULL && start->next->priority < p) 
+    if ((*head)->priority > p) 
     {
-        start = start->next;
+        tempvar->next = *head;
+        (*head) = tempvar;
     }
- 
-    temp->next = start->next;
-    start->next = temp;
-}
+    else 
+    {
+        while (starting->next != NULL && starting->next->priority < p) 
+        {
+            starting = starting->next;
+        }
+    
+        tempvar->next = starting->next;
+        starting->next = tempvar;
+    }
 }
 
 int isEmpty(struct node** head)
@@ -101,10 +82,25 @@ switch(choice)
     {
         char task[100];
         int prior;
-        printf("Enter the Task\n");
+        printf("Enter the Task (Use _ (underscore) instead of space) :\n");
         scanf("%s",task);
-        printf("Enter the priority for %s \n",task);
-        scanf("%d",&prior);
+
+        while (1) 
+        {
+        printf("Enter the priority for %s (0-10): ", task);
+        scanf("%d", &prior);
+        if (prior >= 0 && prior <= 10) 
+        {
+            break;
+        } 
+        else 
+        {
+            printf("Invalid priority value. Please enter a value between 0 and 10.\n");
+        }
+    }
+        
+        
+       
         
        
          if(pq==NULL)
@@ -221,31 +217,41 @@ switch(choice)
         break;
     }
     case 5:
-    {
-        if(!isEmpty(&pq) && numberOfTask-numberOfCompletedTask!=0)
+   {
+        if (!isEmpty(&pq) && numberOfTask - numberOfCompletedTask != 0) 
         {
-            struct node* ptri=pq;
-            struct node* ptri1=pq;
-
-            while(ptri1->completed!=0)
+            struct node* ptr = pq;
+            int highestPriority = -1;
+            while (ptr != NULL) 
             {
-                ptri1=ptri1->next;
-            }
-            int highestPriority=ptri1->priority;
-            printf("Highest Priority Tasks\n");
-            while(ptri != NULL && ptri->priority == highestPriority)
-            {
-                if(ptri->completed!=1)
+                if (ptr->completed == 0 && (highestPriority == -1 || ptr->priority < highestPriority)) 
                 {
-                     printf("%s \n",ptri->data);
-                    ptri=ptri->next;
+                    highestPriority = ptr->priority;
                 }
-               
+                ptr = ptr->next;
             }
-        }
-        else
+            
+            if (highestPriority == -1) 
+            {
+                printf("\nNo Task Currently To Be Done.\n");
+            } 
+            else 
+            {
+                ptr = pq;
+                printf("Highest Priority Tasks:\n");
+                while (ptr != NULL) 
+                {
+                    if (ptr->completed == 0 && ptr->priority == highestPriority) 
+                    {
+                        printf("%s\n", ptr->data);    
+                    }
+                    ptr = ptr->next;
+                }
+            }
+        } 
+        else 
         {
-            printf("\nNo Task Currently To Be Done\n\n");
+            printf("\nNo Task Currently To Be Done.\n");
         }
         break;
     }
